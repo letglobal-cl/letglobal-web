@@ -1,0 +1,18 @@
+{
+  "_nota": "Parámetros que cambian pocas veces al año. Revisar cuando cambie el ingreso mínimo, las comisiones AFP, los topes (febrero) o la cotización del empleador (agosto). Agregar filas nuevas con su mes 'desde'; no borrar las anteriores.",
+  "ingreso_minimo": [
+    { "desde": "2026-08", "monto": 553553, "fuente": "Dirección del Trabajo" }
+  ],
+  "cotizacion_empleador": [
+    { "desde": "2025-08", "tasa": 1.0, "fuente": "Ley 21.735" },
+    { "desde": "2026-08", "tasa": 3.5, "fuente": "Ley 21.735 (hasta julio 2027)" }
+  ],
+  "topes_uf": { "afp_salud": 90, "cesantia": 135.2, "anio": 2026, "fuente": "Superintendencia de Pensiones" },
+  "comisiones_afp": { "Capital": 1.44, "Cuprum": 1.44, "Habitat": 1.27, "Modelo": 0.58, "PlanVital": 1.16, "Provida": 1.45, "Uno": 0.46 },
+  "asignacion_familiar": [
+    { "tramo": "A", "monto": 22601, "hasta": 649039 },
+    { "tramo": "B", "monto": 13870, "hasta": 947990 },
+    { "tramo": "C", "monto": 4382, "hasta": 1478539 },
+    { "tramo": "D", "monto": 0, "hasta": null }
+  ]
+}

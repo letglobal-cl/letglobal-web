@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Calculadora de remuneraciones | Let Global Auditores</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0B2850;--gold:#D9A952;--gold-ink:#8E6A22;
+  --bg:#F2F4F7;--paper:#FFFFFF;--ink:#0B2850;--muted:#56657A;--line:#D8DEE7;--soft:#EBEFF4;--field:#FFFFFF;--warn:#8A3A2F;--warn-bg:#FBEFEC;
+  --seg1:#0B2850;--seg2:#6F87A8;--seg3:#D9A952;--seg4:#B9C6D6;--seg5:#E3C98F;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#061426;--paper:#0D213D;--ink:#E8EDF5;--muted:#9DAEC6;--line:#22395A;--soft:#12294A;--field:#081A31;--gold-ink:#E3BE72;--warn:#F0A195;--warn-bg:#3A1E1B;
+    --seg1:#E8EDF5;--seg2:#6F87A8;--seg3:#D9A952;--seg4:#3B5579;--seg5:#8C733E;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#061426;--paper:#0D213D;--ink:#E8EDF5;--muted:#9DAEC6;--line:#22395A;--soft:#12294A;--field:#081A31;--gold-ink:#E3BE72;--warn:#F0A195;--warn-bg:#3A1E1B;
+  --seg1:#E8EDF5;--seg2:#6F87A8;--seg3:#D9A952;--seg4:#3B5579;--seg5:#8C733E;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 Figtree,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-variant-numeric:tabular-nums lining-nums}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+/* Header */
+.top{background:#0B2850;color:#F4F6FA;border-bottom:3px solid var(--gold)}
+.top .in{max-width:1180px;margin:0 auto;padding:22px 20px 26px;display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.brand{display:flex;gap:12px;align-items:center;text-decoration:none;color:inherit}
+.brand svg{flex:none}
+.brand b{display:block;font-family:Spectral,Georgia,serif;font-weight:600;font-size:19px;letter-spacing:.01em}
+.brand span{display:block;font-size:12.5px;color:#C9D3E2}
+.top h1{flex:1 1 380px;margin:0;font-family:Spectral,Georgia,serif;font-weight:500;font-size:clamp(24px,3.2vw,34px);line-height:1.15;text-align:right}
+.top h1 small{display:block;font-family:Figtree,sans-serif;font-size:14px;color:#C9D3E2;font-weight:400;margin-top:4px}
+@media (max-width:760px){.top h1{text-align:left}}
+
+.wrap{max-width:1180px;margin:0 auto;padding:24px 20px 48px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,470px);gap:24px;align-items:start}
+@media (max-width:960px){.wrap{grid-template-columns:minmax(0,1fr)}}
+
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:10px}
+form.panel{padding:6px 22px 22px}
+fieldset{border:0;border-top:1px solid var(--line);margin:0;padding:18px 0 4px}
+fieldset:first-of-type{border-top:0}
+legend{font-family:Spectral,Georgia,serif;font-size:18px;font-weight:600;padding:0;margin-bottom:10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px 16px}
+label.f{display:flex;flex-direction:column;gap:5px;font-size:13.5px;font-weight:500;color:var(--muted)}
+label.f em{font-style:normal;font-weight:400;font-size:12.5px}
+input,select{font:inherit;color:var(--ink);background:var(--field);border:1px solid var(--line);border-radius:6px;padding:9px 11px;width:100%;min-width:0}
+input:focus,select:focus{border-color:var(--gold);outline:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--gold) 30%,transparent)}
+.money{position:relative}
+.money::before{content:"$";position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+.money input{padding-left:24px;text-align:right}
+.pct input{text-align:right}
+.hint{font-size:12.5px;color:var(--muted);margin:6px 0 0}
+
+.seg{display:inline-grid;grid-auto-flow:column;border:1px solid var(--line);border-radius:8px;padding:3px;background:var(--soft);gap:3px}
+.seg input{position:absolute;opacity:0;pointer-events:none;width:1px}
+.seg label{padding:7px 14px;border-radius:6px;cursor:pointer;font-weight:600;font-size:14px;color:var(--muted);white-space:nowrap}
+.seg input:checked+label{background:var(--paper);color:var(--ink);box-shadow:0 1px 2px rgba(11,40,80,.18)}
+.seg input:focus-visible+label{outline:2px solid var(--gold)}
+.mode{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:18px 0 4px}
+.target label.f{font-size:14.5px;color:var(--ink);font-weight:600}
+.target input{font-size:22px;font-weight:600;padding:12px 12px 12px 28px}
+.target .money::before{font-size:20px}
+
+details.params{border-top:1px solid var(--line);padding-top:14px;margin-top:18px}
+details.params summary{cursor:pointer;font-weight:600}
+.actions{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
+button{font:inherit;font-weight:600;border-radius:7px;padding:10px 16px;cursor:pointer;border:1px solid var(--line);background:var(--paper);color:var(--ink)}
+button.pri{background:#0B2850;color:#fff;border-color:#0B2850}
+
+/* Result sheet */
+.sheet{position:sticky;top:calc(16px + env(safe-area-inset-top,0px));overflow:hidden}
+@media (max-width:960px){.sheet{position:static}}
+.sheet header{padding:20px 22px 16px;border-bottom:1px dashed var(--line)}
+.sheet .ttl{display:flex;justify-content:space-between;gap:10px;font-size:13px;color:var(--muted)}
+.net{margin-top:10px}
+.net .lbl{font-size:14px;color:var(--muted)}
+.net .amt{font-family:Spectral,Georgia,serif;font-weight:600;font-size:clamp(34px,5vw,44px);line-height:1.1}
+.net .sub{font-size:13.5px;color:var(--muted);margin-top:4px}
+.flow{padding:16px 22px 6px}
+.bar{display:flex;height:16px;border-radius:4px;overflow:hidden;background:var(--soft)}
+.bar i{display:block;height:100%}
+.legend{display:grid;grid-template-columns:1fr 1fr;gap:4px 14px;margin:10px 0 0;padding:0;list-style:none;font-size:12.5px;color:var(--muted)}
+.legend li{display:flex;align-items:center;gap:6px}
+.legend b{color:var(--ink);font-weight:600;margin-left:auto}
+.legend s{width:9px;height:9px;border-radius:2px;flex:none;text-decoration:none}
+.flow p{font-size:13.5px;margin:10px 0 0}
+
+.blk{padding:14px 22px 4px}
+.blk h3{font-family:Spectral,Georgia,serif;font-size:16.5px;font-weight:600;margin:0 0 6px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+td{padding:4px 0;vertical-align:top}
+td:last-child{text-align:right;white-space:nowrap;padding-left:12px}
+td small{display:block;color:var(--muted);font-size:12px}
+tr.tot td{border-top:1px solid var(--line);font-weight:700;padding-top:7px}
+.warns{padding:0 22px}
+.warn{background:var(--warn-bg);color:var(--warn);border-radius:6px;padding:9px 12px;font-size:13px;margin:12px 0 0}
+.empty{padding:34px 22px;color:var(--muted)}
+.empty strong{display:block;color:var(--ink);font-family:Spectral,Georgia,serif;font-size:19px;margin-bottom:4px}
+.foot{padding:14px 22px 20px;font-size:12px;color:var(--muted);border-top:1px dashed var(--line);margin-top:12px}
+
+.below{max-width:1180px;margin:0 auto;padding:0 20px 56px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px}
+@media (max-width:860px){.below{grid-template-columns:minmax(0,1fr)}}
+.below section{padding:20px 22px}
+.below h2{font-family:Spectral,Georgia,serif;font-weight:600;font-size:20px;margin:0 0 8px}
+.below ul{margin:0;padding-left:18px;font-size:13.5px}
+.below li{margin:4px 0}
+.cta{background:#0B2850;color:#F4F6FA;border-color:#0B2850}
+.cta p{color:#C9D3E2;font-size:14.5px;margin:0 0 14px;max-width:60ch}
+.cta .btns{display:flex;gap:10px;flex-wrap:wrap}
+.cta a{display:inline-block;text-decoration:none;font-weight:600;padding:10px 16px;border-radius:7px;background:var(--gold);color:#0B2850}
+.cta a.alt{background:transparent;color:#F4F6FA;border:1px solid #4A6488}
+.legal{max-width:1180px;margin:0 auto;padding:0 20px 40px;font-size:12.5px;color:var(--muted)}
+
+@media print{
+  body{background:#fff;color:#000}
+  .top{background:#fff;color:#0B2850;border-bottom:2px solid #D9A952}
+  .top h1 small,.brand span{color:#56657A}
+  form.panel,.below,.actions,.no-print{display:none!important}
+  .wrap{display:block;padding:12px 0}
+  .sheet{position:static;border:0}
+}
+@media (prefers-reduced-motion:no-preference){.bar i{transition:width .35s ease}}
+</style>
+</head>
+<body>
+<div class="top">
+  <div class="in">
+    <a class="brand" href="index.html" aria-label="Let Global, volver al inicio">
+      <svg width="44" height="44" viewBox="0 0 44 44" aria-hidden="true">
+        <circle cx="22" cy="22" r="19" fill="#12366A" stroke="#D9A952" stroke-width="2"/>
+        <ellipse cx="22" cy="22" rx="8" ry="19" fill="none" stroke="#D9A952" stroke-width="1.3"/>
+        <path d="M3.5 16h37M3.5 28h37M22 3v38" stroke="#D9A952" stroke-width="1.1" fill="none"/>
+      </svg>
+      <div><b>Let Global</b><span>Auditores Consultores SpA</span></div>
+    </a>
+    <h1>Calculadora de remuneraciones
+      <small>Del líquido al sueldo base, o del base al líquido, con el costo total para la empresa.</small></h1>
+  </div>
+</div>
+
+<main class="wrap">
+  <form class="panel" id="f" autocomplete="off" onsubmit="return false">
+    <div class="mode">
+      <div class="seg" role="radiogroup" aria-label="Qué quieres calcular">
+        <input type="radio" name="mode" id="m1" value="liq" checked><label for="m1">Tengo el líquido</label>
+        <input type="radio" name="mode" id="m2" value="base"><label for="m2">Tengo el sueldo base</label>
+      </div>
+      <label class="f" style="min-width:170px">Período
+        <select id="periodo"></select>
+      </label>
+    </div>
+
+    <fieldset class="target">
+      <legend id="tgtLegend">Sueldo líquido que debe recibir</legend>
+      <label class="f"><span id="tgtLabel">Líquido a pagar</span>
+        <span class="money"><input id="target" inputmode="numeric" placeholder="0" aria-describedby="tgtHint"></span>
+      </label>
+      <p class="hint" id="tgtHint">El cálculo se actualiza mientras escribes.</p>
+    </fieldset>
+
+    <fieldset>
+      <legend>Previsión y salud</legend>
+      <div class="grid">
+        <label class="f">AFP
+          <select id="afp"></select>
+        </label>
+        <label class="f">Sistema de salud
+          <select id="salud"><option value="fonasa">Fonasa</option><option value="isapre">Isapre</option></select>
+        </label>
+        <label class="f isa" hidden>Valor plan Isapre
+          <input id="plan" inputmode="decimal" placeholder="0" style="text-align:right">
+        </label>
+        <label class="f isa" hidden>Unidad del plan
+          <select id="planU"><option value="UF">UF</option><option value="CLP">Pesos</option></select>
+        </label>
+        <label class="f">APV régimen B <em>descuento mensual por planilla</em>
+          <span class="money"><input id="apv" inputmode="numeric" placeholder="0"></span>
+        </label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Contrato</legend>
+      <div class="grid">
+        <label class="f">Tipo de contrato
+          <select id="contrato">
+            <option value="indef">Indefinido</option>
+            <option value="indef11">Indefinido, más de 11 años</option>
+            <option value="plazo">Plazo fijo</option>
+            <option value="obra">Obra o faena</option>
+          </select>
+        </label>
+        <label class="f">Gratificación
+          <select id="grat">
+            <option value="art50">Art. 50, 25% con tope 4,75 IMM</option>
+            <option value="no">No se paga mensualmente</option>
+          </select>
+        </label>
+        <label class="f">Cargas familiares
+          <input id="cargas" type="number" min="0" max="20" step="1" value="0" style="text-align:right">
+        </label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Otros haberes y descuentos</legend>
+      <div class="grid">
+        <label class="f">Colación <em>no imponible</em><span class="money"><input id="colacion" inputmode="numeric" placeholder="0"></span></label>
+        <label class="f">Movilización <em>no imponible</em><span class="money"><input id="movil" inputmode="numeric" placeholder="0"></span></label>
+        <label class="f">Otros haberes imponibles<span class="money"><input id="otrosImp" inputmode="numeric" placeholder="0"></span></label>
+        <label class="f">Otros haberes no imponibles<span class="money"><input id="otrosNoImp" inputmode="numeric" placeholder="0"></span></label>
+        <label class="f">Otros descuentos<span class="money"><input id="otrosDesc" inputmode="numeric" placeholder="0"></span></label>
+        <label class="f">Tasa adicional mutualidad <em>% según resolución</em>
+          <span class="pct"><input id="mutAd" inputmode="decimal" value="0"></span></label>
+      </div>
+    </fieldset>
+
+    <details class="params">
+      <summary>Parámetros del período</summary>
+      <p class="hint">Vienen cargados desde fuentes oficiales. Puedes ajustarlos si necesitas simular otro mes.</p>
+      <div class="grid" style="margin-top:10px">
+        <label class="f">UF último día del mes<input id="pUF" inputmode="decimal" style="text-align:right"></label>
+        <label class="f">UTM del mes<input id="pUTM" inputmode="numeric" style="text-align:right"></label>
+        <label class="f">Ingreso mínimo mensual<input id="pIMM" inputmode="numeric" style="text-align:right"></label>
+        <label class="f">Tope AFP y salud (UF)<input id="pTopeAFP" inputmode="decimal" style="text-align:right"></label>
+        <label class="f">Tope seguro cesantía (UF)<input id="pTopeAFC" inputmode="decimal" style="text-align:right"></label>
+        <label class="f">Cotización empleador Ley 21.735 (%)<input id="pEmp" inputmode="decimal" style="text-align:right"></label>
+      </div>
+    </details>
+
+    <div class="actions">
+      <button type="button" class="pri" id="print">Imprimir o guardar en PDF</button>
+      <button type="button" id="reset">Limpiar</button>
+    </div>
+  </form>
+
+  <aside class="panel sheet" id="sheet" aria-live="polite"></aside>
+</main>
+
+<div class="below">
+  <section class="panel">
+    <h2>Cómo se calcula</h2>
+    <ul>
+      <li>AFP: 10% obligatorio más la comisión de cada administradora, sobre la remuneración imponible con tope de 90 UF (DL 3.500, art. 17 y art. 16).</li>
+      <li>Salud: 7% con el mismo tope. Si el plan Isapre es mayor, se descuenta el plan, pero solo el 7% legal rebaja la base del impuesto.</li>
+      <li>Seguro de cesantía: 0,6% trabajador y 2,4% empleador en contrato indefinido; 3% solo empleador en plazo fijo u obra; 0,8% empleador tras 11 años (Ley 19.728, art. 5), tope 135,2 UF.</li>
+      <li>Impuesto único: base = imponible − AFP − 7% salud − cesantía − APV B, aplicando la tabla mensual del SII (LIR, arts. 42 N°1, 42 bis y 43).</li>
+      <li>Gratificación art. 50 CT: 25% del sueldo base con tope mensual de 4,75 ingresos mínimos ÷ 12.</li>
+      <li>Empleador: cotización de la Ley 21.735 según su calendario gradual (3,5% entre agosto 2026 y julio 2027: 0,1% cuenta individual, 0,9% Cotización con Rentabilidad Protegida, 2,5% Seguro Social Previsional con SIS), más mutualidad 0,90% básica + adicional (Ley 16.744) y 0,03% SANNA (Ley 21.010, art. 3).</li>
+      <li>Asignación familiar según el tramo de la remuneración del mes; la ley usa el promedio del semestre anterior, así que confírmalo en el caso real. La paga el empleador y la recupera en Previred, por eso no suma al costo.</li>
+    </ul>
+  </section>
+  <section class="panel">
+    <h2>Fuentes oficiales</h2>
+    <ul>
+      <li><a href="https://www.sii.cl/valores_y_fechas/impuesto_2da_categoria/impuesto2026.htm" target="_blank" rel="noopener">SII: Impuesto Único de Segunda Categoría 2026</a></li>
+      <li><a href="https://www.sii.cl/valores_y_fechas/uf/uf2026.htm" target="_blank" rel="noopener">SII: valores UF 2026</a></li>
+      <li><a href="https://www.spensiones.cl/portal/institucional/594/w3-article-2815.html" target="_blank" rel="noopener">Superintendencia de Pensiones: comisiones AFP</a></li>
+      <li><a href="https://www.spensiones.cl/portal/institucional/594/w3-propertyvalue-10906.html" target="_blank" rel="noopener">Superintendencia de Pensiones: cotización de cargo del empleador</a></li>
+      <li><a href="https://www.afc.cl/empleadores/pagos-y-dudas-sobre-cotizaciones/cotizaciones-cuanto-y-como-se-paga/" target="_blank" rel="noopener">AFC Chile: cotizaciones por tipo de contrato</a></li>
+      <li><a href="https://www.dt.gob.cl/portal/1628/w3-article-60141.html" target="_blank" rel="noopener">Dirección del Trabajo: ingreso mínimo mensual</a></li>
+      <li><a href="https://www.suseso.gob.cl/612/w3-article-641708.html" target="_blank" rel="noopener">SUSESO: cotización Ley SANNA</a></li>
+    </ul>
+  </section>
+  <section class="panel cta" style="grid-column:1/-1">
+    <h2>¿Quieres que llevemos tus remuneraciones?</h2>
+    <p>En Let Global preparamos liquidaciones, Previred, Libro de Remuneraciones Electrónico y la revisión tributaria de tus pagos mes a mes.</p>
+    <div class="btns">
+      <a href="mailto:letglobalauditoresspa@gmail.com?subject=Consulta%20remuneraciones">Escribir por correo</a>
+      <a class="alt" href="https://wa.me/56988072630" target="_blank" rel="noopener">Hablar por WhatsApp</a>
+    </div>
+  </section>
+</div>
+<p class="legal">Resultado referencial: no reemplaza una liquidación definitiva. Puede variar por jornada parcial, licencias, días trabajados, horas extra, trabajo pesado u otras condiciones del contrato. Let Global Auditores Consultores SpA.</p>
+
+<script>
+// Valores de respaldo: se usan si no se pueden leer los archivos de /datos
+let PERIODOS = {
+  "2026-09": {nombre:"Septiembre 2026", UF:41057.20, UTM:71721, IMM:553553, emp:3.5},
+  "2026-08": {nombre:"Agosto 2026", UF:40873.77, UTM:71649, IMM:553553, emp:3.5}
+};
+let COMUN = {topeAFP:90, topeAFC:135.2};
+let AFP = {Capital:1.44, Cuprum:1.44, Habitat:1.27, Modelo:0.58, PlanVital:1.16, Provida:1.45, Uno:0.46};
+let ACTUALIZADO = "";
+// Tabla mensual IUSC en UTM (LIR art. 43 N°1)
+const TRAMOS = [
+  {hasta:13.5, f:0, r:0},{hasta:30, f:0.04, r:0.54},{hasta:50, f:0.08, r:1.74},{hasta:70, f:0.135, r:4.49},
+  {hasta:90, f:0.23, r:11.14},{hasta:120, f:0.304, r:17.8},{hasta:310, f:0.35, r:23.32},{hasta:Infinity, f:0.40, r:38.82}
+];
+// Asignación familiar (tramos vigentes desde mayo 2026)
+let ASIG = [{hasta:649039, m:22601, t:"A"},{hasta:947990, m:13870, t:"B"},{hasta:1478539, m:4382, t:"C"},{hasta:Infinity, m:0, t:"D"}];
+
+const $ = id => document.getElementById(id);
+const nf = new Intl.NumberFormat("es-CL",{maximumFractionDigits:0});
+const nf2 = new Intl.NumberFormat("es-CL",{minimumFractionDigits:2,maximumFractionDigits:2});
+const clp = n => "$" + nf.format(Math.round(n));
+const intv = el => Number(String(el.value).replace(/\D/g,"")) || 0;
+const decv = el => { const s = String(el.value).trim().replace(/\./g,"").replace(",","."); const n = parseFloat(s); return isFinite(n) ? n : 0; };
+const R = Math.round;
+
+// Setup selects
+function llenarSelects(){
+  const per = $("periodo"), afp = $("afp"), selAfp = afp.value;
+  per.innerHTML = ""; afp.innerHTML = "";
+  Object.keys(PERIODOS).sort().reverse().forEach(k => per.add(new Option(PERIODOS[k].nombre + (PERIODOS[k].provisoria ? " (UF provisoria)" : ""), k)));
+  afp.add(new Option("Selecciona una AFP",""));
+  for (const [k,c] of Object.entries(AFP)) afp.add(new Option(`${k} (${nf2.format(c)}%)`,k));
+  afp.value = selAfp in AFP ? selAfp : "";
+}
+const MESES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+const vigente = (lista, periodo) => [...lista].filter(x => x.desde <= periodo).sort((a,b)=>a.desde<b.desde?1:-1)[0];
+async function cargarDatos(){
+  try {
+    const [ind, par] = await Promise.all([
+      fetch("datos/indicadores.json",{cache:"no-cache"}).then(r => { if(!r.ok) throw 0; return r.json(); }),
+      fetch("datos/parametros.json",{cache:"no-cache"}).then(r => { if(!r.ok) throw 0; return r.json(); })
+    ]);
+    const nuevos = {};
+    for (const [k,v] of Object.entries(ind.periodos)) {
+      const imm = vigente(par.ingreso_minimo, k), emp = vigente(par.cotizacion_empleador, k);
+      if (!v.UF || !v.UTM || !imm || !emp) continue;
+      const [y,m] = k.split("-");
+      nuevos[k] = {nombre:`${MESES[+m-1]} ${y}`, UF:v.UF, UTM:v.UTM, IMM:imm.monto, emp:emp.tasa, provisoria:!!v.UF_provisoria};
+    }
+    if (!Object.keys(nuevos).length) return;
+    PERIODOS = nuevos;
+    COMUN = {topeAFP:par.topes_uf.afp_salud, topeAFC:par.topes_uf.cesantia};
+    AFP = par.comisiones_afp;
+    ASIG = par.asignacion_familiar.map(t => ({hasta: t.hasta ?? Infinity, m:t.monto, t:t.tramo}));
+    ACTUALIZADO = ind.actualizado || "";
+    llenarSelects(); loadParams(); render();
+  } catch(e) { /* se mantienen los valores de respaldo */ }
+}
+llenarSelects();
+
+function loadParams(){
+  const p = PERIODOS[$("periodo").value];
+  $("pUF").value = nf2.format(p.UF); $("pUTM").value = nf.format(p.UTM); $("pIMM").value = nf.format(p.IMM);
+  $("pTopeAFP").value = String(COMUN.topeAFP).replace(".",","); $("pTopeAFC").value = String(COMUN.topeAFC).replace(".",",");
+  $("pEmp").value = String(p.emp).replace(".",",");
+}
+
+function params(){
+  return {UF:decv($("pUF")), UTM:intv($("pUTM")), IMM:intv($("pIMM")), topeAFP:decv($("pTopeAFP")), topeAFC:decv($("pTopeAFC")), emp:decv($("pEmp"))/100};
+}
+function inputs(){
+  return {
+    mode: document.querySelector('input[name=mode]:checked').value,
+    target: intv($("target")), afp:$("afp").value, salud:$("salud").value, plan:decv($("plan")), planU:$("planU").value,
+    apv:intv($("apv")), contrato:$("contrato").value, grat:$("grat").value==="art50", cargas:Math.max(0,Math.floor(Number($("cargas").value)||0)),
+    colacion:intv($("colacion")), movil:intv($("movil")), otrosImp:intv($("otrosImp")), otrosNoImp:intv($("otrosNoImp")),
+    otrosDesc:intv($("otrosDesc")), mutAd:decv($("mutAd"))/100
+  };
+}
+
+function calc(base, I, P){
+  const topeGrat = 4.75 * P.IMM / 12;
+  const grat = I.grat ? R(Math.min(0.25*base, topeGrat)) : 0;
+  const imponible = base + grat + I.otrosImp;
+  const impAFP = Math.min(imponible, P.topeAFP*P.UF);
+  const impAFC = Math.min(imponible, P.topeAFC*P.UF);
+  const com = (AFP[I.afp]||0)/100;
+  const afp = R(impAFP*(0.10+com));
+  const salud7 = R(impAFP*0.07);
+  const plan = I.salud==="isapre" ? (I.planU==="UF" ? I.plan*P.UF : I.plan) : 0;
+  const salud = I.salud==="isapre" ? Math.max(salud7, R(plan)) : salud7;
+  const afcT = I.contrato==="indef" ? R(impAFC*0.006) : 0;
+  const apvB = Math.min(I.apv, 50*P.UF);
+  const baseTrib = Math.max(0, imponible - afp - salud7 - afcT - apvB);
+  const enUTM = baseTrib / P.UTM;
+  const tr = TRAMOS.find(t => enUTM <= t.hasta);
+  const iusc = Math.max(0, R(baseTrib*tr.f - tr.r*P.UTM));
+  const at = ASIG.find(a => imponible <= a.hasta);
+  const asig = I.cargas * at.m;
+  const noImp = I.colacion + I.movil + I.otrosNoImp + asig;
+  const haberes = imponible + noImp;
+  const prevT = afp + salud + afcT;
+  const desc = prevT + iusc + I.apv + I.otrosDesc;
+  const liquido = haberes - desc;
+  const afcRate = {indef:0.024, indef11:0.008, plazo:0.03, obra:0.03}[I.contrato];
+  const empPrev = R(impAFP*P.emp);
+  const afcE = R(impAFC*afcRate);
+  const mutual = R(impAFP*(0.009 + I.mutAd));
+  const sanna = R(impAFP*0.0003);
+  const aportes = empPrev + afcE + mutual + sanna;
+  const costo = haberes - asig + aportes;
+  return {base, grat, topeGrat, imponible, impAFP, impAFC, com, afp, salud7, plan, salud, afcT, apvB, baseTrib, tr, iusc,
+    at, asig, noImp, haberes, prevT, desc, liquido, afcRate, empPrev, afcE, mutual, sanna, aportes, costo,
+    topado: imponible > P.topeAFP*P.UF};
+}
+
+function solveBase(I, P){
+  let lo = 0, hi = 60000000;
+  if (calc(hi,I,P).liquido < I.target) return null;
+  for (let i=0;i<80;i++){ const mid=(lo+hi)/2; if (calc(mid,I,P).liquido < I.target) lo=mid; else hi=mid; }
+  let b = Math.round(hi);
+  // ajuste fino por redondeos
+  while (calc(b,I,P).liquido < I.target) b++;
+  while (b>0 && calc(b-1,I,P).liquido >= I.target) b--;
+  return b;
+}
+
+const row = (a,b,sub) => `<tr><td>${a}${sub?`<small>${sub}</small>`:""}</td><td>${b}</td></tr>`;
+
+function render(){
+  const I = inputs(), P = params();
+  const sheet = $("sheet");
+  const per = PERIODOS[$("periodo").value].nombre;
+  document.querySelectorAll(".isa").forEach(e => e.hidden = I.salud!=="isapre");
+  $("tgtLegend").textContent = I.mode==="liq" ? "Sueldo líquido que debe recibir" : "Sueldo base pactado";
+  $("tgtLabel").textContent = I.mode==="liq" ? "Líquido a pagar" : "Sueldo base mensual";
+
+  if (!I.target || !I.afp || !P.UF || !P.UTM){
+    sheet.innerHTML = `<div class="empty"><strong>${!I.target ? (I.mode==="liq"?"Ingresa el líquido":"Ingresa el sueldo base") : "Elige la AFP del trabajador"}</strong>
+      La liquidación estimada, el impuesto y el costo empresa aparecen aquí apenas completes ${!I.target?"el monto y la AFP":"ese dato"}.</div>`;
+    return;
+  }
+  let base = I.target;
+  if (I.mode==="liq"){
+    base = solveBase(I,P);
+    if (base===null){ sheet.innerHTML = `<div class="empty"><strong>Monto fuera de rango</strong>Revisa el líquido ingresado: no se alcanza con un sueldo base razonable.</div>`; return; }
+  }
+  const c = calc(base,I,P);
+  const warns = [];
+  if (c.base < P.IMM) warns.push(`El sueldo base queda bajo el ingreso mínimo mensual (${clp(P.IMM)}). Para jornada completa no es válido (art. 44 del Código del Trabajo).`);
+  if (c.liquido < 0) warns.push("Los descuentos superan los haberes.");
+  if (I.salud==="isapre" && c.plan > c.salud7) warns.push(`El plan Isapre supera el 7% legal: los ${clp(c.salud-c.salud7)} de diferencia se descuentan, pero no rebajan el impuesto.`);
+  if (c.topado) warns.push(`La remuneración imponible supera el tope de ${nf2.format(P.topeAFP)} UF: AFP, salud y aportes del empleador se calculan sobre ${clp(c.impAFP)}.`);
+  if (I.otrosDesc + I.apv > 0 && c.liquido < 0) {}
+
+  const seg = [
+    {n:"Líquido al trabajador", v:Math.max(0,c.liquido - c.asig), col:"var(--seg1)"},
+    {n:"Cotizaciones del trabajador", v:c.prevT + I.apv, col:"var(--seg2)"},
+    {n:"Impuesto único", v:c.iusc, col:"var(--seg3)"},
+    {n:"Aportes del empleador", v:c.aportes, col:"var(--seg4)"},
+    {n:"Otros descuentos", v:I.otrosDesc, col:"var(--seg5)"}
+  ].filter(s => s.v>0);
+  const tot = seg.reduce((a,s)=>a+s.v,0) || 1;
+  const pctLiq = R(100*Math.max(0,c.liquido - c.asig)/c.costo);
+  const tasaEf = c.baseTrib ? (100*c.iusc/c.baseTrib) : 0;
+  const trIdx = TRAMOS.indexOf(c.tr);
+  const trTxt = trIdx===0 ? "Exento (hasta 13,5 UTM)" : `Tramo ${trIdx+1}: factor ${nf2.format(c.tr.f*100)}%, rebaja ${nf2.format(c.tr.r)} UTM`;
+  const afcTxt = {indef:"0,6% trabajador", indef11:"sin cotización del trabajador (más de 11 años)", plazo:"sin cotización del trabajador", obra:"sin cotización del trabajador"}[I.contrato];
+
+  sheet.innerHTML = `
+  <header>
+    <div class="ttl"><span>Liquidación estimada</span><span>${per}</span></div>
+    <div class="net">
+      <div class="lbl">${I.mode==="liq" ? "Sueldo base necesario" : "Sueldo líquido a pagar"}</div>
+      <div class="amt">${clp(I.mode==="liq" ? c.base : c.liquido)}</div>
+      <div class="sub">${I.mode==="liq" ? `Resulta un líquido de ${clp(c.liquido)} (diferencia ${clp(c.liquido - I.target)} por redondeo).` : `Con un sueldo base de ${clp(c.base)}.`} Costo empresa: <strong>${clp(c.costo)}</strong>.</div>
+    </div>
+  </header>
+  <div class="flow">
+    <div class="bar" role="img" aria-label="Distribución del costo empresa">${seg.map(s=>`<i style="width:${100*s.v/tot}%;background:${s.col}"></i>`).join("")}</div>
+    <ul class="legend">${seg.map(s=>`<li><s style="background:${s.col}"></s>${s.n}<b>${clp(s.v)}</b></li>`).join("")}</ul>
+    <p>De cada $100 que paga la empresa, el trabajador recibe <strong>$${pctLiq}</strong> líquidos${c.asig?" (sin contar la asignación familiar)":""}.</p>
+  </div>
+  <div class="warns">${warns.map(w=>`<div class="warn">${w}</div>`).join("")}</div>
+  <div class="blk"><h3>Haberes imponibles</h3><table>
+    ${row("Sueldo base", clp(c.base))}
+    ${I.grat ? row("Gratificación art. 50", clp(c.grat), c.grat >= c.topeGrat-0.5 ? `Topada en ${clp(c.topeGrat)}` : "25% del sueldo base") : ""}
+    ${I.otrosImp ? row("Otros imponibles", clp(I.otrosImp)) : ""}
+    <tr class="tot"><td>Total imponible</td><td>${clp(c.imponible)}</td></tr></table></div>
+  ${c.noImp ? `<div class="blk"><h3>Haberes no imponibles</h3><table>
+    ${I.colacion ? row("Colación", clp(I.colacion)) : ""}
+    ${I.movil ? row("Movilización", clp(I.movil)) : ""}
+    ${I.otrosNoImp ? row("Otros no imponibles", clp(I.otrosNoImp)) : ""}
+    ${c.asig ? row(`Asignación familiar tramo ${c.at.t}`, clp(c.asig), `${I.cargas} carga(s) × ${clp(c.at.m)}`) : ""}
+    <tr class="tot"><td>Total no imponible</td><td>${clp(c.noImp)}</td></tr></table></div>` : ""}
+  ${I.cargas && !c.asig ? `<div class="warns"><div class="warn">Con esta remuneración (tramo D) no corresponde asignación familiar.</div></div>` : ""}
+  <div class="blk"><h3>Descuentos</h3><table>
+    ${row(`AFP ${I.afp}`, clp(c.afp), `10% + ${nf2.format(c.com*100)}% comisión`)}
+    ${row(I.salud==="isapre"?"Isapre":"Fonasa", clp(c.salud), I.salud==="isapre" && c.plan>c.salud7 ? `Plan pactado; 7% legal ${clp(c.salud7)}` : "7% legal")}
+    ${row("Seguro de cesantía", clp(c.afcT), afcTxt)}
+    ${I.apv ? row("APV régimen B", clp(I.apv), I.apv > c.apvB ? `Rebaja impuesto hasta ${clp(c.apvB)} (50 UF)` : "Rebaja la base del impuesto") : ""}
+    ${row("Impuesto único", clp(c.iusc), `Base ${clp(c.baseTrib)} · tasa efectiva ${nf2.format(tasaEf)}%`)}
+    ${I.otrosDesc ? row("Otros descuentos", clp(I.otrosDesc)) : ""}
+    <tr class="tot"><td>Total descuentos</td><td>${clp(c.desc)}</td></tr>
+    <tr class="tot"><td>Sueldo líquido</td><td>${clp(c.liquido)}</td></tr></table></div>
+  <div class="blk"><h3>Impuesto único de segunda categoría</h3><table>
+    ${row("Remuneración tributable", clp(c.baseTrib), `${nf2.format(c.baseTrib/P.UTM)} UTM`)}
+    ${row("Tramo aplicado", "", trTxt)}
+    ${trIdx>0 ? row("Cálculo", clp(c.iusc), `${clp(c.baseTrib)} × ${nf2.format(c.tr.f)} − ${clp(c.tr.r*P.UTM)}`) : ""}
+  </table></div>
+  <div class="blk"><h3>Aportes del empleador</h3><table>
+    ${row("Cotización Ley 21.735", clp(c.empPrev), `${nf2.format(P.emp*100)}%: cuenta individual, CRP y SSP con SIS`)}
+    ${row("Seguro de cesantía", clp(c.afcE), `${nf2.format(c.afcRate*100)}%`)}
+    ${row("Mutualidad", clp(c.mutual), `0,90% básica + ${nf2.format(I.mutAd*100)}% adicional`)}
+    ${row("Ley SANNA", clp(c.sanna), "0,03%")}
+    <tr class="tot"><td>Costo empresa</td><td>${clp(c.costo)}</td></tr></table></div>
+  <div class="foot">UF ${nf2.format(P.UF)} · UTM ${clp(P.UTM)} · IMM ${clp(P.IMM)} · Tope AFP ${nf2.format(P.topeAFP)} UF · Tope AFC ${nf2.format(P.topeAFC)} UF. ${ACTUALIZADO ? `Indicadores actualizados el ${ACTUALIZADO}. ` : ""}${PERIODOS[$("periodo").value].provisoria ? "La UF del último día del mes aún no se publica: se usa la última disponible. " : ""}Resultado referencial preparado por Let Global Auditores Consultores SpA.</div>`;
+}
+
+// Formateo de miles en campos de dinero
+document.querySelectorAll('.money input, #pUTM, #pIMM').forEach(el => el.addEventListener("input", () => {
+  const n = intv(el); el.value = n ? nf.format(n) : "";
+}));
+$("periodo").addEventListener("change", () => { loadParams(); render(); });
+$("f").addEventListener("input", render);
+$("f").addEventListener("change", render);
+$("print").addEventListener("click", () => window.print());
+$("reset").addEventListener("click", () => {
+  const p = $("periodo").value; $("f").reset(); $("periodo").value = p; loadParams(); render();
+});
+loadParams(); render(); cargarDatos();
+</script>
+</body>
+</html>
