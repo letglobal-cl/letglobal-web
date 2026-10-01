@@ -1,8 +1,24 @@
 {
-  "actualizado": "2026-09-24",
+  "actualizado": "2026-10-01",
   "fuente": "mindicador.cl (datos del Banco Central de Chile)",
   "periodos": {
-    "2026-08": { "UF": 40873.77, "UF_fecha": "2026-08-31", "UF_provisoria": false, "UTM": 71649 },
-    "2026-09": { "UF": 41057.2, "UF_fecha": "2026-09-30", "UF_provisoria": false, "UTM": 71721 }
+    "2026-08": {
+      "UF": 40873.77,
+      "UF_fecha": "2026-08-31",
+      "UF_provisoria": false,
+      "UTM": 71649
+    },
+    "2026-09": {
+      "UF": 41057.2,
+      "UF_fecha": "2026-09-30",
+      "UF_provisoria": false,
+      "UTM": 71721
+    },
+    "2026-10": {
+      "UF": 41065.38,
+      "UF_fecha": "2026-10-01",
+      "UF_provisoria": true,
+      "UTM": 72151
+    }
   }
 }
