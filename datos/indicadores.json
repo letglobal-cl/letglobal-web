@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-08",
+  "actualizado": "2026-11-09",
   "fuente": "mindicador.cl (datos del Banco Central de Chile)",
   "periodos": {
     "2026-08": {
@@ -21,9 +21,9 @@
       "UTM": 72151
     },
     "2026-11": {
-      "UF": 41290.15,
-      "UF_fecha": "2026-11-08",
-      "UF_provisoria": true,
+      "UF": 41439.89,
+      "UF_fecha": "2026-11-30",
+      "UF_provisoria": false,
       "UTM": 72440
     }
   }
